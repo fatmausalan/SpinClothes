@@ -5,15 +5,17 @@ using UnityEngine;
 public class Hanger : MonoBehaviour
 {
     GameObject mainHanger;
+    GameObject tabla;
     GameObject tempHanger = null;
     int height;
     int dressCount = 0;
-    int temp = 4;
+    int temp = 0;
     bool isHangersFull = false;
-    int nextHanger = 16;
+    int nextHanger = 12;
 
     void Start(){
         mainHanger = GameObject.Find("MainHanger");
+        tabla = mainHanger.transform.GetChild(2).gameObject;
         mainHanger.transform.position = new Vector3(transform.position.x, height, transform.position.z);
         this.transform.localPosition = new Vector3(0,-height,0);
         StartCoroutine(hangerMoveRotate());
@@ -24,15 +26,15 @@ public class Hanger : MonoBehaviour
     void Update()
     {
         float horizontalAxis = Input.GetAxis("Horizontal")*5*Time.deltaTime;
-        transform.position += new Vector3(-1f * Time.unscaledDeltaTime, 0,0);
-        this.transform.Translate(horizontalAxis, 0, 0);
+        transform.position += new Vector3(-1f * Time.deltaTime, 0,0);
+        this.transform.Translate(0, 0, horizontalAxis);
     }
    
     IEnumerator hangerMoveRotate(){
         float rotation = transform.rotation.y;
         while (true) {
             rotation += 50;
-            transform.rotation = Quaternion.Euler(new Vector3(0, rotation, 0)); // rotate on y axis
+            tabla.transform.rotation = Quaternion.Euler(new Vector3(0, rotation, 0)); // rotate on y axis
             yield  return new WaitForSecondsRealtime(0.1f);
         }
     }
@@ -42,22 +44,22 @@ public class Hanger : MonoBehaviour
     private void OnTriggerEnter(Collider other) {
       
         if(other.gameObject.tag == "Dress"){           
-            if(temp == 16 && isHangersFull == true){
+            if(temp == 12 && isHangersFull == true){
                 if(this.gameObject.transform.childCount > nextHanger){
-                    tempHanger= this.gameObject.transform.GetChild(nextHanger).gameObject;
-                    temp = 4;
+                    tempHanger= tabla.transform.GetChild(nextHanger).gameObject;
+                    temp = 0;
                     other.gameObject.SetActive(false);
                     dressCount++;
-                    tempHanger.transform.GetChild(temp).gameObject.SetActive(true);
+                    tempHanger.transform.GetChild(2).gameObject.transform.GetChild(temp).gameObject.SetActive(true);
                     temp++;
                     nextHanger++;
                 }
             }
             else{
                 other.gameObject.SetActive(false);
-                tempHanger.transform.GetChild(temp).gameObject.SetActive(true);
+                tempHanger.transform.GetChild(2).gameObject.transform.GetChild(temp).gameObject.SetActive(true);
                 temp++;
-                if(temp == 16){
+                if(temp == 12){
                     isHangersFull = true;
                 }
             }
@@ -69,9 +71,10 @@ public class Hanger : MonoBehaviour
         }
         if(other.gameObject.tag == "Hanger" && other.gameObject.GetComponent<CollectableHanger>().GetIsCollect() == false){
             height -= 1;
+            Debug.Log("heyy");
             other.gameObject.GetComponent<CollectableHanger>().SetCollect();
             other.gameObject.GetComponent<CollectableHanger>().SetIndex(height);
-            other.gameObject.transform.parent = mainHanger.transform;
+            other.gameObject.transform.parent = tabla.transform;
         }  
       
     }
