@@ -7,7 +7,7 @@ public class Hanger : MonoBehaviour
     GameObject mainHanger;
     GameObject tabla;
     GameObject tempHanger = null;
-    int height;
+    float height;
     int dressCount = 0;
     int temp = 0;
     bool isHangersFull = false;
@@ -16,8 +16,8 @@ public class Hanger : MonoBehaviour
     void Start(){
         mainHanger = GameObject.Find("MainHanger");
         tabla = mainHanger.transform.GetChild(2).gameObject;
-        mainHanger.transform.position = new Vector3(transform.position.x, height, transform.position.z);
-        this.transform.localPosition = new Vector3(0,-height,0);
+        mainHanger.transform.position = new Vector3(transform.position.x, -height, transform.position.z);
+        this.transform.localPosition = new Vector3(0,height,0);
         StartCoroutine(hangerMoveRotate());
         tempHanger = this.gameObject;
 
@@ -45,7 +45,7 @@ public class Hanger : MonoBehaviour
       
         if(other.gameObject.tag == "Dress"){           
             if(temp == 12 && isHangersFull == true){
-                if(this.gameObject.transform.childCount > nextHanger){
+                if(tabla.transform.childCount > nextHanger){
                     tempHanger= tabla.transform.GetChild(nextHanger).gameObject;
                     temp = 0;
                     other.gameObject.SetActive(false);
@@ -70,10 +70,10 @@ public class Hanger : MonoBehaviour
             return;
         }
         if(other.gameObject.tag == "Hanger" && other.gameObject.GetComponent<CollectableHanger>().GetIsCollect() == false){
-            height -= 1;
+            height -= 0.5f;
             Debug.Log("heyy");
             other.gameObject.GetComponent<CollectableHanger>().SetCollect();
-            other.gameObject.GetComponent<CollectableHanger>().SetIndex(height);
+          //  other.gameObject.GetComponent<CollectableHanger>().SetIndex(height);
             other.gameObject.transform.parent = tabla.transform;
         }  
       

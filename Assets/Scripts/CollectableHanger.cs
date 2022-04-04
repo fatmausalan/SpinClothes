@@ -39,8 +39,15 @@ public class CollectableHanger : MonoBehaviour
         if(other.gameObject.tag == "Obstacle"){
             collector.reduceHeight(1);
             transform.parent = null;
-            //GetComponent<BoxCollider>().enabled = false;
-           // other.gameObject.GetComponent<BoxCollider>().enabled = false;
+            transform.GetComponent<Rigidbody>().isKinematic = false;
+            transform.GetComponent<Rigidbody>().useGravity = true;
+            int a = transform.GetChild(2).childCount;
+            for(int i = 0; i<a; i++){
+                Debug.Log(i);
+                transform.GetChild(2).gameObject.transform.GetChild(0).GetComponent<Rigidbody>().isKinematic = false;
+                transform.GetChild(2).gameObject.transform.GetChild(0).parent = null;
+            }
+                       
         }
     } 
 }
